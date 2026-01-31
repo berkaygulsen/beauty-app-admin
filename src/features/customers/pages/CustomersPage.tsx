@@ -1,12 +1,11 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { customersApi, type CustomerFilters } from "@/api/endpoints/customers"
+import { customersApi, type Customer, type CustomerFilters } from "@/api/endpoints/customers"
+import type { PaginatedResponse } from "@/types"
 import { CustomerListTable } from "../components/CustomerListTable"
 import { CustomerFilters as Filters } from "../components/CustomerFilters"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableLoading, ErrorState, EmptyTableState } from "@/components/ui"
-import type { AxiosError } from "axios"
-import toast from "react-hot-toast"
 
 export default function CustomersPage() {
   const [filters, setFilters] = useState<CustomerFilters>({
@@ -14,15 +13,14 @@ export default function CustomersPage() {
     offset: 0,
   })
 
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery<
+    PaginatedResponse<Customer>,
+    Error,
+    PaginatedResponse<Customer>,
+    (string | CustomerFilters)[]
+  >({
     queryKey: ["customers", filters],
     queryFn: () => customersApi.getCustomers(filters),
-    onError: (error: AxiosError<{ error?: { message?: string }; message?: string }>) => {
-      const errorMessage = error.response?.data?.error?.message || 
-                          error.response?.data?.message || 
-                          "Müşteriler yüklenirken bir hata oluştu"
-      toast.error(errorMessage)
-    },
   })
 
   const handlePageChange = (page: number) => {
@@ -71,7 +69,7 @@ export default function CustomersPage() {
               message={
                 error instanceof Error
                   ? error.message
-                  : "Bir hata oluştu. Lütfen tekrar deneyin."
+                  : String(error)
               }
               onRetry={() => refetch()}
             />

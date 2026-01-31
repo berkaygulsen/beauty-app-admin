@@ -73,7 +73,7 @@ export function DashboardCharts() {
                 fill="#8884d8"
                 dataKey="count"
               >
-                {charts.providerStatusDistribution.map((entry, index) => (
+                {charts.providerStatusDistribution.map((_entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

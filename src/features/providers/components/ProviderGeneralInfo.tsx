@@ -38,20 +38,26 @@ export function ProviderGeneralInfo({ provider }: ProviderGeneralInfoProps) {
           <CardTitle>Adres Bilgileri</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {provider.address ? (
+          {provider.address ?? (provider.city || provider.district || provider.addressLine) ? (
             <>
-              <div>
-                <span className="text-sm text-muted-foreground">Şehir:</span>
-                <p className="font-medium">{provider.address.city}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">İlçe:</span>
-                <p className="font-medium">{provider.address.district}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Adres:</span>
-                <p className="font-medium">{provider.address.addressLine}</p>
-              </div>
+              {provider.city && (
+                <div>
+                  <span className="text-sm text-muted-foreground">Şehir:</span>
+                  <p className="font-medium">{provider.city}</p>
+                </div>
+              )}
+              {provider.district && (
+                <div>
+                  <span className="text-sm text-muted-foreground">İlçe:</span>
+                  <p className="font-medium">{provider.district}</p>
+                </div>
+              )}
+              {(provider.address ?? provider.addressLine) && (
+                <div>
+                  <span className="text-sm text-muted-foreground">Adres:</span>
+                  <p className="font-medium">{provider.address ?? provider.addressLine}</p>
+                </div>
+              )}
             </>
           ) : (
             <p className="text-muted-foreground">Adres bilgisi bulunmuyor</p>
@@ -76,16 +82,16 @@ export function ProviderGeneralInfo({ provider }: ProviderGeneralInfoProps) {
             <span className="text-sm text-muted-foreground">
               Toplam Hizmet:
             </span>
-            <p className="font-medium">{provider.totalServices}</p>
+            <p className="font-medium">{provider.totalServices ?? provider._count?.serviceRequests ?? "-"}</p>
           </div>
           <div>
             <span className="text-sm text-muted-foreground">
               Ortalama Puan:
             </span>
             <p className="font-medium">
-              {provider.averageRating > 0
-                ? provider.averageRating.toFixed(1)
-                : "-"}
+              {(provider.averageRating != null && Number(provider.averageRating) > 0)
+                ? Number(provider.averageRating).toFixed(1)
+                : (provider.score != null ? provider.score.toFixed(1) : "-")}
             </p>
           </div>
         </CardContent>

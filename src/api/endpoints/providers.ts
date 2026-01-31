@@ -52,6 +52,10 @@ export interface ProviderFilters {
 }
 
 export interface ProviderDetail extends Provider {
+  address?: string
+  totalServices?: number
+  averageRating?: number | null
+  approvedAt?: string | null
   services: Array<{
     id: string
     name: string

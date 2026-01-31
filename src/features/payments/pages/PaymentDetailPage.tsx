@@ -54,7 +54,7 @@ export default function PaymentDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">
               Ödeme #{payment.id.slice(0, 8)}
             </h1>
-            <p className="text-muted-foreground">{payment.providerName}</p>
+            <p className="text-muted-foreground">{payment.providerName ?? (payment.provider ? `${payment.provider.firstName ?? ""} ${payment.provider.lastName ?? ""}`.trim() : payment.providerId)}</p>
           </div>
         </div>
       </div>

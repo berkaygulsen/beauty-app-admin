@@ -1,8 +1,11 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { serviceRequestsApi } from "@/api/endpoints/serviceRequests"
-import type { ServiceRequestDetail } from "@/api/endpoints/serviceRequests"
+import {
+  serviceRequestsApi,
+  type ServiceRequestDetail,
+  type ServiceRequestStatusHistoryItem,
+} from "@/api/endpoints/serviceRequests"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -39,7 +42,7 @@ export function ServiceRequestDetailContent({
   const queryClient = useQueryClient()
   const [statusDialogOpen, setStatusDialogOpen] = useState(false)
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
-  const [newStatus, setNewStatus] = useState("")
+  const [newStatus, setNewStatus] = useState<ServiceRequestDetail["status"] | "">("")
   const [reason, setReason] = useState("")
 
   const allowedTransitions = getAllowedTransitions(serviceRequest.status)
@@ -47,7 +50,7 @@ export function ServiceRequestDetailContent({
   const updateStatusMutation = useMutation({
     mutationFn: () =>
       serviceRequestsApi.updateStatus(serviceRequest.id, {
-        status: newStatus,
+        status: (newStatus || "NEW") as "NEW" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED" | "TIMEOUT" | "PAYMENT_RECEIVED",
         reason: reason || undefined,
       }),
     onSuccess: () => {
@@ -124,7 +127,7 @@ export function ServiceRequestDetailContent({
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setNewStatus(allowedTransitions[0])
+                    setNewStatus(allowedTransitions[0] as ServiceRequestDetail["status"])
                     setStatusDialogOpen(true)
                   }}
                 >
@@ -164,7 +167,11 @@ export function ServiceRequestDetailContent({
             </Badge>
             <ServiceRequestStateMachine
               currentStatus={serviceRequest.status}
-              statusHistory={serviceRequest.statusHistory}
+              statusHistory={(serviceRequest.statusHistory ?? []).map((h) => ({
+                ...h,
+                changedBy: h.changedBy ?? undefined,
+                reason: h.reason ?? undefined,
+              }))}
             />
           </div>
         </CardContent>
@@ -186,8 +193,8 @@ export function ServiceRequestDetailContent({
                 Talep Tarihi:
               </span>
               <p className="font-medium">
-                {formatDate(serviceRequest.requestDate)}{" "}
-                {serviceRequest.requestTime}
+                {formatDate(serviceRequest.requestDate ?? serviceRequest.requestedDate)}{" "}
+                {serviceRequest.requestTime ?? serviceRequest.requestedTime}
               </p>
             </div>
             <div>
@@ -231,7 +238,7 @@ export function ServiceRequestDetailContent({
                     navigate(`/providers/${serviceRequest.providerId}`)
                   }
                 >
-                  {serviceRequest.providerName}
+                  {serviceRequest.providerName ?? (serviceRequest.provider ? `${serviceRequest.provider.firstName} ${serviceRequest.provider.lastName}` : serviceRequest.providerId)}
                 </button>
               </p>
             </div>
@@ -244,19 +251,23 @@ export function ServiceRequestDetailContent({
                     navigate(`/customers/${serviceRequest.customerId}`)
                   }
                 >
-                  {serviceRequest.customerName}
+                  {serviceRequest.customerName ?? (serviceRequest.customer ? `${serviceRequest.customer.firstName} ${serviceRequest.customer.lastName}` : serviceRequest.customerId)}
                 </button>
               </p>
             </div>
-            {serviceRequest.address && (
+            {(serviceRequest.address ?? serviceRequest.addressLine) && (
               <div>
                 <span className="text-sm text-muted-foreground">Adres:</span>
                 <p className="font-medium">
-                  {serviceRequest.address.city} / {serviceRequest.address.district}
+                  {serviceRequest.address
+                    ? `${serviceRequest.address.city ?? ""} / ${serviceRequest.address.district ?? ""}`.trim() || serviceRequest.address.addressLine
+                    : serviceRequest.addressLine}
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {serviceRequest.address.addressLine}
-                </p>
+                {serviceRequest.address?.addressLine && (
+                  <p className="text-sm text-muted-foreground">
+                    {serviceRequest.address.addressLine}
+                  </p>
+                )}
               </div>
             )}
             <div>
@@ -281,20 +292,20 @@ export function ServiceRequestDetailContent({
             <div>
               <span className="text-sm text-muted-foreground">Tutar:</span>
               <p className="font-medium">
-                {formatCurrency(serviceRequest.payment.amount)}
+                {formatCurrency(serviceRequest.payment?.amount ?? 0)}
               </p>
             </div>
             <div>
               <span className="text-sm text-muted-foreground">Durum:</span>
-              <Badge variant="outline">{serviceRequest.payment.status}</Badge>
+              <Badge variant="outline">{(serviceRequest.payment as { status?: string })?.status ?? "-"}</Badge>
             </div>
-            {serviceRequest.payment.paidAt && (
+            {(serviceRequest.payment as { paidAt?: string })?.paidAt && (
               <div>
                 <span className="text-sm text-muted-foreground">
                   Ödeme Tarihi:
                 </span>
                 <p className="font-medium">
-                  {formatDateTime(serviceRequest.payment.paidAt)}
+                  {formatDateTime((serviceRequest.payment as { paidAt: string }).paidAt)}
                 </p>
               </div>
             )}
@@ -337,7 +348,7 @@ export function ServiceRequestDetailContent({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {serviceRequest.statusHistory.map((history, _index) => (
+              {serviceRequest.statusHistory!.map((history: ServiceRequestStatusHistoryItem, _index: number) => (
                 <div
                   key={history.id}
                   className="flex items-start gap-4 border-b pb-4 last:border-0"
@@ -382,7 +393,7 @@ export function ServiceRequestDetailContent({
               <Select
                 id="new-status"
                 value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value)}
+                onChange={(e) => setNewStatus(e.target.value as ServiceRequestDetail["status"] | "")}
               >
                 <option value="">Seçiniz</option>
                 {allowedTransitions.map((status) => (

@@ -25,7 +25,7 @@ export function Header() {
       <div className="flex flex-1 items-center justify-end gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">
-            {admin?.name || admin?.email}
+            {admin ? `${admin.firstName ?? ""} ${admin.lastName ?? ""}`.trim() || admin.email : ""}
           </span>
           <span className="text-xs text-muted-foreground">
             ({admin?.role})

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import type { DocumentDetail } from "@/api/endpoints/documents"
+import type { DocumentDetail, DocumentVerificationHistoryItem } from "@/api/endpoints/documents"
 import {
   getDocumentStatusBadgeVariant,
   getDocumentStatusLabel,
@@ -17,22 +17,32 @@ interface DocumentDetailContentProps {
 }
 
 export function DocumentDetailContent({
-  document,
+  document: doc,
 }: DocumentDetailContentProps) {
   const navigate = useNavigate()
+  const fileUrl = doc.fileUrl ?? doc.documentUrl
+  const fileName = doc.fileName ?? "document"
+  const status = doc.verificationStatus
+  const docType = doc.documentType
+  const providerName =
+    doc.providerName ??
+    (doc.provider
+      ? [doc.provider.firstName, doc.provider.lastName].filter(Boolean).join(" ")
+      : "")
+  const uploadedAt = doc.uploadedAt ?? doc.createdAt
 
   const handleDownload = async () => {
     try {
       const { documentsApi } = await import("@/api/endpoints/documents")
-      const blob = await documentsApi.downloadDocument(document.id)
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
+      const result = await documentsApi.downloadDocument(doc.id)
+      const url = "documentUrl" in result ? result.documentUrl : String(result)
+      const a = globalThis.document.createElement("a")
       a.href = url
-      a.download = document.fileName
-      document.body.appendChild(a)
+      a.download = fileName
+      a.target = "_blank"
+      globalThis.document.body.appendChild(a)
       a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      globalThis.document.body.removeChild(a)
       toast.success("Doküman indirildi")
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
@@ -43,8 +53,8 @@ export function DocumentDetailContent({
   }
 
   const handlePreview = () => {
-    if (document.fileUrl) {
-      window.open(document.fileUrl, "_blank")
+    if (fileUrl) {
+      window.open(fileUrl, "_blank")
     }
   }
 
@@ -61,16 +71,16 @@ export function DocumentDetailContent({
               <span className="text-sm text-muted-foreground">Durum:</span>
               <div className="mt-1">
                 <Badge
-                  variant={getDocumentStatusBadgeVariant(document.status)}
+                  variant={getDocumentStatusBadgeVariant(status)}
                   className="text-lg px-4 py-2"
                 >
-                  {getDocumentStatusLabel(document.status)}
+                  {getDocumentStatusLabel(status)}
                 </Badge>
               </div>
             </div>
             <div>
               <span className="text-sm text-muted-foreground">Tür:</span>
-              <p className="font-medium">{document.type}</p>
+              <p className="font-medium">{docType}</p>
             </div>
             <div>
               <span className="text-sm text-muted-foreground">Provider:</span>
@@ -78,10 +88,10 @@ export function DocumentDetailContent({
                 <button
                   className="text-primary hover:underline"
                   onClick={() =>
-                    navigate(`/providers/${document.providerId}`)
+                    navigate(`/providers/${doc.providerId}`)
                   }
                 >
-                  {document.providerName}
+                  {providerName}
                 </button>
               </p>
             </div>
@@ -90,32 +100,32 @@ export function DocumentDetailContent({
                 Yüklenme Tarihi:
               </span>
               <p className="font-medium">
-                {formatDateTime(document.uploadedAt)}
+                {uploadedAt ? formatDateTime(uploadedAt) : "-"}
               </p>
             </div>
-            {document.verifiedAt && (
+            {doc.verifiedAt && (
               <div>
                 <span className="text-sm text-muted-foreground">
                   Doğrulama Tarihi:
                 </span>
                 <p className="font-medium">
-                  {formatDateTime(document.verifiedAt)}
+                  {formatDateTime(doc.verifiedAt)}
                 </p>
               </div>
             )}
-            {document.verifiedBy && (
+            {doc.verifiedBy && (
               <div>
                 <span className="text-sm text-muted-foreground">
                   Doğrulayan:
                 </span>
-                <p className="font-medium">{document.verifiedBy}</p>
+                <p className="font-medium">{doc.verifiedBy}</p>
               </div>
             )}
-            {document.rejectionReason && (
+            {doc.rejectionReason && (
               <div>
                 <span className="text-sm text-muted-foreground">Red Sebebi:</span>
                 <p className="font-medium text-destructive">
-                  {document.rejectionReason}
+                  {doc.rejectionReason}
                 </p>
               </div>
             )}
@@ -129,15 +139,15 @@ export function DocumentDetailContent({
           <CardContent className="space-y-2">
             <div>
               <span className="text-sm text-muted-foreground">Dosya Adı:</span>
-              <p className="font-medium">{document.fileName}</p>
+              <p className="font-medium">{fileName}</p>
             </div>
             <div>
               <span className="text-sm text-muted-foreground">Dosya Boyutu:</span>
-              <p className="font-medium">{formatFileSize(document.fileSize)}</p>
+              <p className="font-medium">{doc.fileSize != null ? formatFileSize(doc.fileSize) : "-"}</p>
             </div>
             <div>
               <span className="text-sm text-muted-foreground">MIME Type:</span>
-              <p className="font-medium">{document.mimeType}</p>
+              <p className="font-medium">{doc.mimeType ?? "-"}</p>
             </div>
             <div className="mt-4 flex gap-2">
               <Button
@@ -148,7 +158,7 @@ export function DocumentDetailContent({
                 <Download className="h-4 w-4" />
                 İndir
               </Button>
-              {document.fileUrl && (
+              {fileUrl && (
                 <Button
                   variant="outline"
                   onClick={handlePreview}
@@ -163,24 +173,24 @@ export function DocumentDetailContent({
       </div>
 
       {/* Document Preview */}
-      {document.fileUrl && (
+      {fileUrl && (
         <Card>
           <CardHeader>
             <CardTitle>Doküman Önizleme</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="border rounded-lg overflow-hidden">
-              {document.mimeType.startsWith("image/") ? (
+              {doc.mimeType?.startsWith("image/") ? (
                 <img
-                  src={document.fileUrl}
-                  alt={document.fileName}
+                  src={fileUrl}
+                  alt={fileName}
                   className="w-full h-auto"
                 />
-              ) : document.mimeType === "application/pdf" ? (
+              ) : doc.mimeType === "application/pdf" ? (
                 <iframe
-                  src={document.fileUrl}
+                  src={fileUrl}
                   className="w-full h-[600px]"
-                  title={document.fileName}
+                  title={fileName}
                 />
               ) : (
                 <div className="p-8 text-center text-muted-foreground">
@@ -194,15 +204,15 @@ export function DocumentDetailContent({
       )}
 
       {/* Verification History */}
-      {document.verificationHistory &&
-        document.verificationHistory.length > 0 && (
+      {doc.verificationHistory &&
+        doc.verificationHistory.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle>Doğrulama Geçmişi</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {document.verificationHistory.map((history) => (
+                {doc.verificationHistory.map((history: DocumentVerificationHistoryItem) => (
                   <div
                     key={history.id}
                     className="flex items-start gap-4 border-b pb-4 last:border-0"
@@ -211,12 +221,12 @@ export function DocumentDetailContent({
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{history.status}</Badge>
                         <span className="text-sm text-muted-foreground">
-                          {formatDateTime(history.verifiedAt)}
+                          {formatDateTime(history.verifiedAt ?? history.changedAt)}
                         </span>
                       </div>
-                      {history.verifiedBy && (
+                      {(history.verifiedBy ?? history.changedBy) && (
                         <p className="text-sm text-muted-foreground mt-1">
-                          Doğrulayan: {history.verifiedBy}
+                          Doğrulayan: {history.verifiedBy ?? history.changedBy}
                         </p>
                       )}
                       {history.reason && (

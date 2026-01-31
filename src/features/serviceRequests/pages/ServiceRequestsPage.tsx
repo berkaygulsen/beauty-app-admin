@@ -16,10 +16,25 @@ export default function ServiceRequestsPage() {
     sortOrder: "desc",
   })
 
+  const apiFilters = {
+    ...filters,
+    offset: ((filters.page ?? 1) - 1) * (filters.limit ?? 10),
+  }
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["service-requests", filters],
-    queryFn: () => serviceRequestsApi.getServiceRequests(filters),
+    queryKey: ["service-requests", apiFilters],
+    queryFn: () => serviceRequestsApi.getServiceRequests(apiFilters),
   })
+
+  const currentPage = filters.page ?? 1
+  const limit = filters.limit ?? 10
+  const total = data?.total ?? 0
+  const totalPages = Math.ceil(total / limit) || 1
+  const pagination = {
+    page: currentPage,
+    limit,
+    total,
+    totalPages,
+  }
 
   return (
     <div className="space-y-6">
@@ -45,7 +60,7 @@ export default function ServiceRequestsPage() {
             Hizmet Talebi Listesi
             {data && (
               <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({data.pagination.total} kayıt)
+                ({total} kayıt)
               </span>
             )}
           </CardTitle>
@@ -64,7 +79,7 @@ export default function ServiceRequestsPage() {
           ) : data ? (
             <ServiceRequestListTable
               serviceRequests={data.data}
-              pagination={data.pagination}
+              pagination={pagination}
               onPageChange={(page) =>
                 setFilters((prev) => ({ ...prev, page }))
               }

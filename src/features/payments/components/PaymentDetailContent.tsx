@@ -31,16 +31,20 @@ export function PaymentDetailContent({
   const handleDownloadInvoice = async () => {
     try {
       const { paymentsApi } = await import("@/api/endpoints/payments")
-      const blob = await paymentsApi.getInvoice(payment.id)
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `invoice-${payment.id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      toast.success("Fatura indirildi")
+      const result = await paymentsApi.getInvoice(payment.id)
+      const url = result.invoiceUrl ?? result.payment?.invoiceUrl
+      if (url) {
+        const a = globalThis.document.createElement("a")
+        a.href = url
+        a.download = `invoice-${payment.id}.pdf`
+        a.target = "_blank"
+        globalThis.document.body.appendChild(a)
+        a.click()
+        globalThis.document.body.removeChild(a)
+        toast.success("Fatura indirildi")
+      } else {
+        toast.error("Fatura URL'si bulunamadı")
+      }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
       toast.error(
@@ -62,10 +66,10 @@ export function PaymentDetailContent({
               <span className="text-sm text-muted-foreground">Durum:</span>
               <div className="mt-1">
                 <Badge
-                  variant={getPaymentStatusBadgeVariant(payment.status)}
+                  variant={getPaymentStatusBadgeVariant(payment.status ?? payment.paymentStatus)}
                   className="text-lg px-4 py-2"
                 >
-                  {getPaymentStatusLabel(payment.status)}
+                  {getPaymentStatusLabel(payment.status ?? payment.paymentStatus)}
                 </Badge>
               </div>
             </div>
@@ -76,7 +80,10 @@ export function PaymentDetailContent({
                   className="text-primary hover:underline"
                   onClick={() => navigate(`/providers/${payment.providerId}`)}
                 >
-                  {payment.providerName}
+                  {payment.providerName ??
+                (payment.provider
+                  ? [payment.provider.firstName, payment.provider.lastName].filter(Boolean).join(" ")
+                  : payment.providerId)}
                 </button>
               </p>
             </div>
@@ -86,13 +93,13 @@ export function PaymentDetailContent({
               </span>
               <p className="font-medium">{formatDate(payment.paymentDate)}</p>
             </div>
-            {payment.processedAt && (
+            {(payment.processedAt ?? payment.processedDate) && (
               <div>
                 <span className="text-sm text-muted-foreground">
                   İşlem Tarihi:
                 </span>
                 <p className="font-medium">
-                  {formatDateTime(payment.processedAt)}
+                  {formatDateTime(payment.processedAt ?? payment.processedDate!)}
                 </p>
               </div>
             )}
@@ -117,7 +124,7 @@ export function PaymentDetailContent({
                 Toplam Tutar:
               </span>
               <p className="text-2xl font-bold">
-                {formatCurrency(payment.totalAmount)}
+                {formatCurrency(payment.totalAmount ?? payment.amount)}
               </p>
             </div>
             <div>
@@ -147,7 +154,7 @@ export function PaymentDetailContent({
       </div>
 
       {/* Service Requests */}
-      {payment.serviceRequests && payment.serviceRequests.length > 0 && (
+      {((payment.serviceRequests ?? []) as Array<{ id: string; amount?: number; commission?: number; serviceName?: string }>).length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>İlgili Hizmet Talepleri</CardTitle>
@@ -163,7 +170,7 @@ export function PaymentDetailContent({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {payment.serviceRequests.map((request) => (
+                {(payment.serviceRequests ?? []).map((request: { id: string; amount?: number; commission?: number; serviceName?: string }) => (
                   <TableRow key={request.id}>
                     <TableCell className="font-mono text-xs">
                       <button
@@ -175,9 +182,9 @@ export function PaymentDetailContent({
                         {request.id.slice(0, 8)}...
                       </button>
                     </TableCell>
-                    <TableCell>{request.serviceName}</TableCell>
-                    <TableCell>{formatCurrency(request.amount)}</TableCell>
-                    <TableCell>{formatCurrency(request.commission)}</TableCell>
+                    <TableCell>{request.serviceName ?? "-"}</TableCell>
+                    <TableCell>{formatCurrency(request.amount ?? 0)}</TableCell>
+                    <TableCell>{formatCurrency(request.commission ?? 0)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -187,25 +194,39 @@ export function PaymentDetailContent({
       )}
 
       {/* Invoice Info */}
-      {payment.invoice && (
+      {(payment.invoice ?? payment.invoiceUrl) && (
         <Card>
           <CardHeader>
             <CardTitle>Fatura Bilgileri</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div>
-              <span className="text-sm text-muted-foreground">
-                Fatura Numarası:
-              </span>
-              <p className="font-medium">{payment.invoice.invoiceNumber}</p>
-            </div>
-            <div>
-              <span className="text-sm text-muted-foreground">
-                Oluşturulma Tarihi:
-              </span>
-              <p className="font-medium">
-                {formatDateTime(payment.invoice.createdAt)}
-              </p>
+            {payment.invoice?.invoiceNumber && (
+              <div>
+                <span className="text-sm text-muted-foreground">
+                  Fatura Numarası:
+                </span>
+                <p className="font-medium">{payment.invoice.invoiceNumber}</p>
+              </div>
+            )}
+            {payment.invoice?.createdAt && (
+              <div>
+                <span className="text-sm text-muted-foreground">
+                  Oluşturulma Tarihi:
+                </span>
+                <p className="font-medium">
+                  {formatDateTime(payment.invoice.createdAt)}
+                </p>
+              </div>
+            )}
+            <div className="mt-4">
+              <Button
+                variant="outline"
+                onClick={handleDownloadInvoice}
+                className="w-full gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Fatura İndir
+              </Button>
             </div>
           </CardContent>
         </Card>

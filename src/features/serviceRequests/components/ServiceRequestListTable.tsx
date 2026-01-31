@@ -80,7 +80,7 @@ export function ServiceRequestListTable({
                         navigate(`/providers/${request.providerId}`)
                       }
                     >
-                      {request.providerName}
+                      {request.provider ? `${request.provider.firstName} ${request.provider.lastName}` : request.providerId}
                     </button>
                   </TableCell>
                   <TableCell>
@@ -90,10 +90,10 @@ export function ServiceRequestListTable({
                         navigate(`/customers/${request.customerId}`)
                       }
                     >
-                      {request.customerName}
+                      {request.customer ? `${request.customer.firstName} ${request.customer.lastName}` : request.customerId}
                     </button>
                   </TableCell>
-                  <TableCell>{request.serviceName}</TableCell>
+                  <TableCell>{request.service?.name ?? "-"}</TableCell>
                   <TableCell>
                     <Badge
                       variant={getServiceRequestStatusBadgeVariant(
@@ -104,7 +104,7 @@ export function ServiceRequestListTable({
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {formatDate(request.requestDate)} {request.requestTime}
+                    {formatDate(request.requestedDate)} {request.requestedTime}
                   </TableCell>
                   <TableCell>{formatCurrency(request.price)}</TableCell>
                   <TableCell>{formatCurrency(request.commission)}</TableCell>

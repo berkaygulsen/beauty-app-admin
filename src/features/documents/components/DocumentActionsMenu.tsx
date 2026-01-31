@@ -85,7 +85,7 @@ export function DocumentActionsMenu({
         {menuOpen && (
           <div className="absolute right-0 top-10 z-50 w-48 rounded-md border bg-background shadow-lg">
             <div className="p-1">
-              {document.status === DOCUMENT_STATUS.PENDING && (
+              {document.verificationStatus === DOCUMENT_STATUS.PENDING && (
                 <>
                   <button
                     className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"

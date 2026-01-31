@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from "react"
+import { Component, ErrorInfo, ReactNode } from "react"
 import { ErrorState } from "./ui/error-state"
 import { Button } from "./ui/button"
 import { Home } from "lucide-react"

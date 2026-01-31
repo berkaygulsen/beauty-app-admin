@@ -54,7 +54,7 @@ export default function DocumentDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">
               Doküman #{document.id.slice(0, 8)}
             </h1>
-            <p className="text-muted-foreground">{document.type}</p>
+            <p className="text-muted-foreground">{document.documentType}</p>
           </div>
         </div>
       </div>

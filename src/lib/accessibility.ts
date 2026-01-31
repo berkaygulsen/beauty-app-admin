@@ -51,21 +51,29 @@ export const KEYBOARD_KEYS = {
 /**
  * Check if key is a navigation key
  */
+const NAV_KEYS: readonly string[] = [
+  KEYBOARD_KEYS.ARROW_UP,
+  KEYBOARD_KEYS.ARROW_DOWN,
+  KEYBOARD_KEYS.ARROW_LEFT,
+  KEYBOARD_KEYS.ARROW_RIGHT,
+  KEYBOARD_KEYS.TAB,
+]
+
+const ACTION_KEYS: readonly string[] = [
+  KEYBOARD_KEYS.ENTER,
+  KEYBOARD_KEYS.SPACE,
+]
+
+/**
+ * Check if key is a navigation key
+ */
 export function isNavigationKey(key: string): boolean {
-  return [
-    KEYBOARD_KEYS.ARROW_UP,
-    KEYBOARD_KEYS.ARROW_DOWN,
-    KEYBOARD_KEYS.ARROW_LEFT,
-    KEYBOARD_KEYS.ARROW_RIGHT,
-    KEYBOARD_KEYS.TAB,
-  ].includes(key as (typeof KEYBOARD_KEYS)[keyof typeof KEYBOARD_KEYS])
+  return NAV_KEYS.includes(key)
 }
 
 /**
  * Check if key is an action key
  */
 export function isActionKey(key: string): boolean {
-  return [KEYBOARD_KEYS.ENTER, KEYBOARD_KEYS.SPACE].includes(
-    key as (typeof KEYBOARD_KEYS)[keyof typeof KEYBOARD_KEYS]
-  )
+  return ACTION_KEYS.includes(key)
 }

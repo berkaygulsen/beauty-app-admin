@@ -70,7 +70,7 @@ export default function ServiceRequestDetailPage() {
             <h1 className="text-3xl font-bold tracking-tight">
               Hizmet Talebi #{serviceRequest.id.slice(0, 8)}
             </h1>
-            <p className="text-muted-foreground">{serviceRequest.serviceName}</p>
+            <p className="text-muted-foreground">{serviceRequest.service?.name ?? "-"}</p>
           </div>
         </div>
       </div>

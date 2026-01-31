@@ -35,7 +35,24 @@ export interface PaymentFilters {
 }
 
 export interface PaymentDetail extends Payment {
-  // Same structure as Payment
+  status?: Payment["paymentStatus"] // alias for UI
+  totalAmount?: number
+  processedAt?: string | null
+  providerName?: string
+  invoice?: {
+    url?: string | null
+    id?: string
+    invoiceNumber?: string
+    createdAt?: string
+  } | null
+  serviceRequests?: Array<{
+    id: string
+    amount?: number
+    commission?: number
+    status?: string
+    paidAt?: string
+    serviceName?: string
+  }>
 }
 
 export interface CustomerPayment {

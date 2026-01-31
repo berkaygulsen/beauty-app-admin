@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { settingsApi } from "@/api/endpoints/settings"
 import type { CancellationPolicy, UpdateCancellationPolicyRequest } from "@/api/endpoints/settings"
@@ -13,13 +13,14 @@ export default function CancellationPolicyPage() {
   const queryClient = useQueryClient()
   const [policies, setPolicies] = useState<CancellationPolicy[]>([])
 
-  const { isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["cancellation-policy"],
     queryFn: () => settingsApi.getCancellationPolicy(),
-    onSuccess: (data: CancellationPolicy[]) => {
-      setPolicies(data)
-    },
   })
+
+  useEffect(() => {
+    if (data) setPolicies(data)
+  }, [data])
 
   const updateMutation = useMutation({
     mutationFn: (data: UpdateCancellationPolicyRequest) =>

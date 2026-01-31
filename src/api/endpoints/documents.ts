@@ -39,8 +39,24 @@ export interface DocumentFilters {
   offset?: number
 }
 
+export interface DocumentVerificationHistoryItem {
+  id: string
+  status: string
+  changedAt: string
+  changedBy?: string | null
+  reason?: string | null
+  verifiedAt?: string
+  verifiedBy?: string | null
+}
+
 export interface DocumentDetail extends Document {
-  // Same structure as Document
+  fileName?: string
+  fileUrl?: string
+  fileSize?: number
+  mimeType?: string
+  uploadedAt?: string
+  verificationHistory?: DocumentVerificationHistoryItem[]
+  providerName?: string
 }
 
 export interface RejectDocumentRequest {

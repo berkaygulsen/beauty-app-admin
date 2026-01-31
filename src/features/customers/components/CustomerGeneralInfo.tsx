@@ -37,7 +37,7 @@ export function CustomerGeneralInfo({ customer }: CustomerGeneralInfoProps) {
               Doğrulama Durumu:
             </span>
             <div className="mt-1">
-              {customer.isVerified ? (
+              {customer.emailVerified && customer.phoneVerified ? (
                 <Badge variant="success" className="gap-1">
                   <CheckCircle className="h-3 w-3" />
                   Doğrulandı
@@ -69,8 +69,8 @@ export function CustomerGeneralInfo({ customer }: CustomerGeneralInfoProps) {
               Ortalama Puan:
             </span>
             <p className="font-medium">
-              {customer.averageRating > 0
-                ? customer.averageRating.toFixed(1)
+              {customer.averageRating != null && Number(customer.averageRating) > 0
+                ? Number(customer.averageRating).toFixed(1)
                 : "-"}
             </p>
           </div>

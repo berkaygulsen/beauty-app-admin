@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { settingsApi } from "@/api/endpoints/settings"
+import type { Setting } from "@/api/endpoints/settings"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,18 +15,25 @@ import { ROUTES } from "@/lib/constants"
 export default function SettingsPage() {
   const queryClient = useQueryClient()
   const [settings, setSettings] = useState<Record<string, string | number | boolean>>({})
+  const [activeTab, setActiveTab] = useState("general")
 
   const { data, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: () => settingsApi.getSettings(),
-    onSuccess: (data: Array<{ key: string; value: string | number | boolean }>) => {
+  })
+
+  useEffect(() => {
+    if (data) {
       const settingsMap: Record<string, string | number | boolean> = {}
-      data.forEach((setting) => {
-        settingsMap[setting.key] = setting.value
+      data.forEach((setting: Setting) => {
+        const v = setting.value
+        if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
+          settingsMap[setting.key] = v
+        }
       })
       setSettings(settingsMap)
-    },
-  })
+    }
+  }, [data])
 
   const updateMutation = useMutation({
     mutationFn: (data: { key: string; value: string | number | boolean }) =>
@@ -51,14 +59,17 @@ export default function SettingsPage() {
     return <div className="p-6">Yükleniyor...</div>
   }
 
-  const groupedSettings = data?.reduce((acc, setting) => {
-    const category = setting.category || "Genel"
-    if (!acc[category]) {
-      acc[category] = []
-    }
-    acc[category].push(setting)
-    return acc
-  }, {} as Record<string, typeof data>)
+  const groupedSettings = data?.reduce(
+    (acc: Record<string, Setting[]>, setting: Setting) => {
+      const category = setting.category || "Genel"
+      if (!acc[category]) {
+        acc[category] = []
+      }
+      acc[category].push(setting)
+      return acc
+    },
+    {} as Record<string, Setting[]>
+  )
 
   return (
     <div className="space-y-6 p-6">
@@ -69,7 +80,7 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="general" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="general">Genel Ayarlar</TabsTrigger>
           <TabsTrigger value="cancellation">İptal Politikası</TabsTrigger>
@@ -77,13 +88,13 @@ export default function SettingsPage() {
 
         <TabsContent value="general" className="space-y-4">
           {groupedSettings &&
-            Object.entries(groupedSettings).map(([category, categorySettings]) => (
+            Object.entries(groupedSettings).map(([category, categorySettings]: [string, Setting[]]) => (
               <Card key={category}>
                 <CardHeader>
                   <CardTitle>{category}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {categorySettings.map((setting) => (
+                  {categorySettings.map((setting: Setting) => (
                     <div key={setting.key} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -99,7 +110,7 @@ export default function SettingsPage() {
                             <input
                               type="checkbox"
                               id={setting.key}
-                              checked={settings[setting.key] ?? setting.value}
+                              checked={Boolean(settings[setting.key] ?? setting.value)}
                               onChange={(e) =>
                                 handleSettingChange(setting.key, e.target.checked)
                               }
@@ -109,7 +120,7 @@ export default function SettingsPage() {
                             <Input
                               id={setting.key}
                               type="number"
-                              value={settings[setting.key] ?? setting.value}
+                              value={String(settings[setting.key] ?? setting.value)}
                               onChange={(e) =>
                                 handleSettingChange(
                                   setting.key,
@@ -121,7 +132,7 @@ export default function SettingsPage() {
                           ) : (
                             <Input
                               id={setting.key}
-                              value={settings[setting.key] ?? setting.value}
+                              value={String(settings[setting.key] ?? setting.value)}
                               onChange={(e) =>
                                 handleSettingChange(setting.key, e.target.value)
                               }

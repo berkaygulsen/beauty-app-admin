@@ -45,7 +45,7 @@ export function PaymentActionsMenu({
   })
 
   const cancelMutation = useMutation({
-    mutationFn: () => paymentsApi.cancelPayment(payment.id),
+    mutationFn: () => paymentsApi.cancelPayment(payment.id, "Admin tarafından iptal edildi"),
     onSuccess: () => {
       toast.success("Ödeme iptal edildi")
       queryClient.invalidateQueries({ queryKey: ["payments"] })
@@ -61,16 +61,20 @@ export function PaymentActionsMenu({
 
   const handleDownloadInvoice = async () => {
     try {
-      const blob = await paymentsApi.getInvoice(payment.id)
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `invoice-${payment.id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      toast.success("Fatura indirildi")
+      const result = await paymentsApi.getInvoice(payment.id)
+      const url = result.invoiceUrl ?? result.payment?.invoiceUrl
+      if (url) {
+        const a = globalThis.document.createElement("a")
+        a.href = url
+        a.download = `invoice-${payment.id}.pdf`
+        a.target = "_blank"
+        globalThis.document.body.appendChild(a)
+        a.click()
+        globalThis.document.body.removeChild(a)
+        toast.success("Fatura indirildi")
+      } else {
+        toast.error("Fatura URL'si bulunamadı")
+      }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } }
       toast.error(
@@ -92,7 +96,7 @@ export function PaymentActionsMenu({
         {menuOpen && (
           <div className="absolute right-0 top-10 z-50 w-48 rounded-md border bg-background shadow-lg">
             <div className="p-1">
-              {payment.status === PAYMENT_STATUS.PENDING && (
+              {payment.paymentStatus === PAYMENT_STATUS.PENDING && (
                 <button
                   className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
                   onClick={() => {
@@ -104,8 +108,8 @@ export function PaymentActionsMenu({
                   İşle
                 </button>
               )}
-              {payment.status !== PAYMENT_STATUS.COMPLETED &&
-                payment.status !== PAYMENT_STATUS.FAILED && (
+              {payment.paymentStatus !== PAYMENT_STATUS.COMPLETED &&
+                payment.paymentStatus !== PAYMENT_STATUS.FAILED && (
                   <button
                     className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent"
                     onClick={() => {

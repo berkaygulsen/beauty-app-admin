@@ -6,7 +6,7 @@ export interface ServiceRequest {
   providerId: string
   customerId: string
   serviceId: string
-  status: "NEW" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED" | "TIMEOUT"
+  status: "NEW" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED" | "TIMEOUT" | "PAYMENT_RECEIVED"
   requestedDate: string // ISO date string
   requestedTime: string
   addressLine?: string | null
@@ -48,7 +48,9 @@ export interface ServiceRequest {
     price: number
   }
   payment?: {
-    // CustomerPayment object
+    amount?: number
+    status?: string
+    paidAt?: string
   } | null
   rating?: {
     // Rating object
@@ -65,14 +67,40 @@ export interface ServiceRequestFilters {
   maxPrice?: number
   limit?: number
   offset?: number
+  page?: number
+  sortBy?: string
+  sortOrder?: "asc" | "desc"
+}
+
+export interface ServiceRequestStatusHistoryItem {
+  id: string
+  status: string
+  changedAt: string
+  changedBy?: string | null
+  reason?: string | null
+}
+
+export interface ServiceRequestReview {
+  id?: string
+  rating?: number
+  comment?: string
+  createdAt?: string
 }
 
 export interface ServiceRequestDetail extends ServiceRequest {
-  // Same structure as ServiceRequest
+  statusHistory?: ServiceRequestStatusHistoryItem[]
+  review?: ServiceRequestReview | null
+  serviceName?: string
+  requestDate?: string
+  requestTime?: string
+  notes?: string | null
+  providerName?: string
+  customerName?: string
+  address?: { city?: string; district?: string; addressLine?: string }
 }
 
 export interface UpdateStatusRequest {
-  status: "NEW" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED" | "TIMEOUT"
+  status: "NEW" | "ACCEPTED" | "REJECTED" | "COMPLETED" | "CANCELLED" | "TIMEOUT" | "PAYMENT_RECEIVED"
   reason?: string // optional
 }
 

@@ -36,12 +36,12 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats?.totalProviders || 0}
+              {stats?.providers?.total ?? 0}
             </div>
             <div className="flex gap-2 text-xs text-muted-foreground mt-1">
-              <span>Aktif: {stats?.activeProviders || 0}</span>
+              <span>Aktif: {stats?.providers?.approved ?? 0}</span>
               <span>•</span>
-              <span>Bekleyen: {stats?.pendingProviders || 0}</span>
+              <span>Bekleyen: {stats?.providers?.pending ?? 0}</span>
             </div>
           </CardContent>
         </Card>
@@ -55,12 +55,12 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats?.totalCustomers || 0}
+              {stats?.customers?.total ?? 0}
             </div>
             <div className="flex gap-2 text-xs text-muted-foreground mt-1">
-              <span>Bugün: {stats?.newCustomersToday || 0}</span>
+              <span>Bugün: {stats?.customers?.newToday ?? 0}</span>
               <span>•</span>
-              <span>Bu Ay: {stats?.newCustomersThisMonth || 0}</span>
+              <span>Bu Ay: {stats?.customers?.newThisMonth ?? 0}</span>
             </div>
           </CardContent>
         </Card>
@@ -74,12 +74,12 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats?.totalServiceRequests || 0}
+              {stats?.serviceRequests?.total ?? 0}
             </div>
             <div className="flex gap-2 text-xs text-muted-foreground mt-1">
-              <span>Yeni: {stats?.newRequests || 0}</span>
+              <span>Yeni: {stats?.serviceRequests?.created ?? 0}</span>
               <span>•</span>
-              <span>Tamamlanan: {stats?.completedRequests || 0}</span>
+              <span>Tamamlanan: {stats?.serviceRequests?.completed ?? 0}</span>
             </div>
           </CardContent>
         </Card>
@@ -91,12 +91,12 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(stats?.totalRevenue || 0)}
+              {formatCurrency(stats?.revenue?.total ?? 0)}
             </div>
             <div className="flex gap-2 text-xs text-muted-foreground mt-1">
-              <span>Bugün: {formatCurrency(stats?.todayRevenue || 0)}</span>
+              <span>Bugün: {formatCurrency(stats?.revenue?.today ?? 0)}</span>
               <span>•</span>
-              <span>Bu Ay: {formatCurrency(stats?.monthRevenue || 0)}</span>
+              <span>Bu Ay: {formatCurrency(stats?.revenue?.thisMonth ?? 0)}</span>
             </div>
           </CardContent>
         </Card>
