@@ -15,7 +15,7 @@ import {
   getProviderStatusLabel,
   formatDate,
 } from "@/lib/utils/status"
-import { Eye, Check, X, Ban, MoreVertical } from "lucide-react"
+import { Eye } from "lucide-react"
 import { ProviderActionsMenu } from "./ProviderActionsMenu"
 import { useState } from "react"
 
@@ -36,11 +36,11 @@ export function ProviderListTable({
   providers = [],
   pagination,
   onPageChange,
-  onSortChange,
+  onSortChange: _onSortChange,
   onProviderAction,
 }: ProviderListTableProps) {
   const navigate = useNavigate()
-  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null)
+  const [_actionMenuOpen, _setActionMenuOpen] = useState<string | null>(null)
 
   return (
     <div className="space-y-4">

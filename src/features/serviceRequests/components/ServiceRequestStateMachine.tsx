@@ -43,7 +43,7 @@ export function ServiceRequestStateMachine({
           {STATUS_ORDER.map((status, index) => {
             const isCompleted = completedStatuses.includes(status)
             const isCurrent = status === currentStatus
-            const isAllowed = allowedTransitions.includes(status)
+            const _isAllowed = allowedTransitions.includes(status)
             const history = statusHistoryMap.get(status)
 
             return (

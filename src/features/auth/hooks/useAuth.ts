@@ -3,6 +3,7 @@ import { authApi } from "@/api/endpoints/auth"
 import { useAuthStore } from "@/store/authStore"
 import { useNavigate } from "react-router-dom"
 import { ROUTES } from "@/lib/constants"
+import type { AxiosError } from "axios"
 import toast from "react-hot-toast"
 
 export function useAuth() {
@@ -17,7 +18,7 @@ export function useAuth() {
       toast.success("Giriş başarılı")
       navigate(ROUTES.DASHBOARD)
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Giriş yapılırken bir hata oluştu"
       )

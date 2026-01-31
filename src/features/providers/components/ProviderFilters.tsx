@@ -15,7 +15,10 @@ export function ProviderFilters({
   filters,
   onFiltersChange,
 }: ProviderFiltersProps) {
-  const handleFilterChange = (key: keyof ProviderFilters, value: any) => {
+  const handleFilterChange = (
+    key: keyof ProviderFilters,
+    value: ProviderFilters[keyof ProviderFilters]
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value,

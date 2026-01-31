@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ROUTES } from "@/lib/constants"
 import {
   Users,
@@ -7,7 +7,6 @@ import {
   DollarSign,
   FileText,
   Activity,
-  BarChart3,
 } from "lucide-react"
 
 const reportCategories = [

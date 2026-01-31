@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 // Admin types
 export interface Admin {
   id: string

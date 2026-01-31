@@ -14,7 +14,10 @@ export function CustomerFilters({
   filters,
   onFiltersChange,
 }: CustomerFiltersProps) {
-  const handleFilterChange = (key: keyof CustomerFilters, value: any) => {
+  const handleFilterChange = (
+    key: keyof CustomerFilters,
+    value: CustomerFilters[keyof CustomerFilters]
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value,

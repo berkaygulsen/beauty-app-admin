@@ -13,10 +13,10 @@ export default function CancellationPolicyPage() {
   const queryClient = useQueryClient()
   const [policies, setPolicies] = useState<CancellationPolicy[]>([])
 
-  const { data, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["cancellation-policy"],
     queryFn: () => settingsApi.getCancellationPolicy(),
-    onSuccess: (data) => {
+    onSuccess: (data: CancellationPolicy[]) => {
       setPolicies(data)
     },
   })

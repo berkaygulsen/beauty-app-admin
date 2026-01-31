@@ -2,8 +2,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:react-refresh/recommended"
+    "plugin:react-hooks/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -21,7 +20,7 @@
     ],
     "@typescript-eslint/no-unused-vars": [
       "warn",
-      { "argsIgnorePattern": "^_" }
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ]
   },
   "settings": {

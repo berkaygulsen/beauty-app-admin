@@ -15,7 +15,10 @@ export function PaymentFilters({
   filters,
   onFiltersChange,
 }: PaymentFiltersProps) {
-  const handleFilterChange = (key: keyof PaymentFilters, value: any) => {
+  const handleFilterChange = (
+    key: keyof PaymentFilters,
+    value: PaymentFilters[keyof PaymentFilters]
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value,

@@ -15,7 +15,10 @@ export function DocumentFilters({
   filters,
   onFiltersChange,
 }: DocumentFiltersProps) {
-  const handleFilterChange = (key: keyof DocumentFilters, value: any) => {
+  const handleFilterChange = (
+    key: keyof DocumentFilters,
+    value: DocumentFilters[keyof DocumentFilters]
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value,

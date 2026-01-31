@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { MoreVertical, CheckCircle, XCircle } from "lucide-react"
 import toast from "react-hot-toast"
+import type { AxiosError } from "axios"
 import { DOCUMENT_STATUS } from "@/lib/constants"
 
 interface DocumentActionsMenuProps {
@@ -39,7 +40,7 @@ export function DocumentActionsMenu({
       onAction()
       setApproveDialogOpen(false)
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Onaylama işlemi başarısız oldu"
       )
@@ -56,7 +57,7 @@ export function DocumentActionsMenu({
       setRejectDialogOpen(false)
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Reddetme işlemi başarısız oldu"
       )

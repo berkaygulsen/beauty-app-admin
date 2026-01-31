@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import type { ServiceRequestFilters } from "@/api/endpoints/serviceRequests"
 import { SERVICE_REQUEST_STATUS } from "@/lib/constants"
-import { Search, X } from "lucide-react"
+import { X } from "lucide-react"
 
 interface ServiceRequestFiltersProps {
   filters: ServiceRequestFilters
@@ -19,7 +19,7 @@ export function ServiceRequestFilters({
 }: ServiceRequestFiltersProps) {
   const handleFilterChange = (
     key: keyof ServiceRequestFilters,
-    value: any
+    value: ServiceRequestFilters[keyof ServiceRequestFilters]
   ) => {
     onFiltersChange({
       ...filters,

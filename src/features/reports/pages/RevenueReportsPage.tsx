@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils/status"
 import { Download } from "lucide-react"
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,

@@ -5,10 +5,7 @@ import { ProviderListTable } from "../components/ProviderListTable"
 import { ProviderFilters as Filters } from "../components/ProviderFilters"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableLoading, ErrorState, EmptyTableState } from "@/components/ui"
-import { useNavigate } from "react-router-dom"
-
 export default function ProvidersPage() {
-  const navigate = useNavigate()
   const [filters, setFilters] = useState<ProviderFilters>({
     limit: 10,
     offset: 0,
@@ -83,7 +80,7 @@ export default function ProvidersPage() {
                 totalPages,
               }}
               onPageChange={handlePageChange}
-              onSortChange={(sortBy, sortOrder) => {
+              onSortChange={(_sortBy, _sortOrder) => {
                 // Note: API doesn't support sortBy/sortOrder, but keeping for UI compatibility
                 setFilters((prev) => ({ ...prev }))
               }}

@@ -34,8 +34,8 @@ export function ServiceRequestListTable({
   serviceRequests,
   pagination,
   onPageChange,
-  onSortChange,
-  onAction,
+  onSortChange: _onSortChange,
+  onAction: _onAction,
 }: ServiceRequestListTableProps) {
   const navigate = useNavigate()
 

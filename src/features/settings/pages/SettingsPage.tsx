@@ -13,13 +13,13 @@ import { ROUTES } from "@/lib/constants"
 
 export default function SettingsPage() {
   const queryClient = useQueryClient()
-  const [settings, setSettings] = useState<Record<string, any>>({})
+  const [settings, setSettings] = useState<Record<string, string | number | boolean>>({})
 
   const { data, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: () => settingsApi.getSettings(),
-    onSuccess: (data) => {
-      const settingsMap: Record<string, any> = {}
+    onSuccess: (data: Array<{ key: string; value: string | number | boolean }>) => {
+      const settingsMap: Record<string, string | number | boolean> = {}
       data.forEach((setting) => {
         settingsMap[setting.key] = setting.value
       })
@@ -28,7 +28,7 @@ export default function SettingsPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: { key: string; value: any }) =>
+    mutationFn: (data: { key: string; value: string | number | boolean }) =>
       settingsApi.updateSetting(data.key, { value: data.value }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["settings"] })
@@ -39,7 +39,7 @@ export default function SettingsPage() {
     },
   })
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = (key: string, value: string | number | boolean) => {
     setSettings({ ...settings, [key]: value })
   }
 

@@ -39,13 +39,13 @@ interface ServiceRequestDispute {
   resolvedBy?: string | null
   createdAt: string
   updatedAt: string
-  serviceRequest: any
+  serviceRequest: unknown
 }
 
 export default function DisputedRequestsPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [filters, setFilters] = useState({
+  const [filters, _setFilters] = useState({
     status: undefined as string | undefined,
     raisedBy: undefined as string | undefined,
     startDate: undefined as string | undefined,

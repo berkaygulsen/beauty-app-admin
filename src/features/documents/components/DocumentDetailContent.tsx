@@ -34,9 +34,10 @@ export function DocumentDetailContent({
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
       toast.success("Doküman indirildi")
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
       toast.error(
-        error.response?.data?.message || "Doküman indirme başarısız oldu"
+        err.response?.data?.message || "Doküman indirme başarısız oldu"
       )
     }
   }

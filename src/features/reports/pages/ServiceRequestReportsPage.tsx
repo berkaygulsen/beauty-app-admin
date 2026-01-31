@@ -11,7 +11,6 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  Legend,
   Tooltip,
   BarChart,
   Bar,

@@ -24,6 +24,7 @@ import {
 import { Select } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import type { AxiosError } from "axios"
 import { SERVICE_REQUEST_STATUS } from "@/lib/constants"
 import toast from "react-hot-toast"
 
@@ -57,7 +58,7 @@ export function ServiceRequestDetailContent({
       setNewStatus("")
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Durum güncelleme başarısız oldu"
       )
@@ -74,7 +75,7 @@ export function ServiceRequestDetailContent({
       setCancelDialogOpen(false)
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "İptal işlemi başarısız oldu"
       )
@@ -88,7 +89,7 @@ export function ServiceRequestDetailContent({
       queryClient.invalidateQueries({ queryKey: ["service-request"] })
       queryClient.invalidateQueries({ queryKey: ["service-requests"] })
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Tamamlama işlemi başarısız oldu"
       )
@@ -336,7 +337,7 @@ export function ServiceRequestDetailContent({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {serviceRequest.statusHistory.map((history, index) => (
+              {serviceRequest.statusHistory.map((history, _index) => (
                 <div
                   key={history.id}
                   className="flex items-start gap-4 border-b pb-4 last:border-0"

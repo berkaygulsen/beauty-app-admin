@@ -4,7 +4,6 @@ import { serviceRequestsApi } from "@/api/endpoints/serviceRequests"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ServiceRequestListTable } from "../components/ServiceRequestListTable"
 import { ServiceRequestFilters } from "../components/ServiceRequestFilters"
-import { formatCurrency, formatDate } from "@/lib/utils/status"
 
 export default function PendingCompletionPage() {
   const [filters, setFilters] = useState({

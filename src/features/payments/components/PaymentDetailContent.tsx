@@ -41,9 +41,10 @@ export function PaymentDetailContent({
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
       toast.success("Fatura indirildi")
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
       toast.error(
-        error.response?.data?.message || "Fatura indirme başarısız oldu"
+        err.response?.data?.message || "Fatura indirme başarısız oldu"
       )
     }
   }

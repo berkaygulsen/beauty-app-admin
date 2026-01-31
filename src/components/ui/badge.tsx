@@ -36,4 +36,5 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- badgeVariants is a style constant used with Badge
 export { Badge, badgeVariants }

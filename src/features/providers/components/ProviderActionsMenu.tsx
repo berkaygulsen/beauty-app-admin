@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import type { AxiosError } from "axios"
 import { MoreVertical, Check, X, Ban } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -40,7 +41,7 @@ export function ProviderActionsMenu({
       setActionDialog(null)
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Onaylama işlemi başarısız oldu"
       )
@@ -57,7 +58,7 @@ export function ProviderActionsMenu({
       setActionDialog(null)
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Reddetme işlemi başarısız oldu"
       )
@@ -74,7 +75,7 @@ export function ProviderActionsMenu({
       setActionDialog(null)
       setReason("")
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Askıya alma işlemi başarısız oldu"
       )

@@ -1,12 +1,9 @@
 import { Outlet } from "react-router-dom"
 import { Sidebar } from "./Sidebar"
 import { Header } from "./Header"
-import { useUIStore } from "@/store/uiStore"
 import { cn } from "@/lib/utils"
 
 export function MainLayout() {
-  const sidebarOpen = useUIStore((state) => state.sidebarOpen)
-
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />

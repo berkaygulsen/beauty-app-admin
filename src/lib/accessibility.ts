@@ -58,12 +58,14 @@ export function isNavigationKey(key: string): boolean {
     KEYBOARD_KEYS.ARROW_LEFT,
     KEYBOARD_KEYS.ARROW_RIGHT,
     KEYBOARD_KEYS.TAB,
-  ].includes(key as any)
+  ].includes(key as (typeof KEYBOARD_KEYS)[keyof typeof KEYBOARD_KEYS])
 }
 
 /**
  * Check if key is an action key
  */
 export function isActionKey(key: string): boolean {
-  return [KEYBOARD_KEYS.ENTER, KEYBOARD_KEYS.SPACE].includes(key as any)
+  return [KEYBOARD_KEYS.ENTER, KEYBOARD_KEYS.SPACE].includes(
+    key as (typeof KEYBOARD_KEYS)[keyof typeof KEYBOARD_KEYS]
+  )
 }

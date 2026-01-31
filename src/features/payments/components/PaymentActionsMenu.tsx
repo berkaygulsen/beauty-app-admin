@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import type { AxiosError } from "axios"
 import { MoreVertical, CheckCircle, XCircle, Download } from "lucide-react"
 import toast from "react-hot-toast"
 import { PAYMENT_STATUS } from "@/lib/constants"
@@ -36,7 +37,7 @@ export function PaymentActionsMenu({
       onAction()
       setProcessDialogOpen(false)
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "Ödeme işleme başarısız oldu"
       )
@@ -51,7 +52,7 @@ export function PaymentActionsMenu({
       onAction()
       setCancelDialogOpen(false)
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(
         error.response?.data?.message || "İptal işlemi başarısız oldu"
       )
@@ -70,9 +71,10 @@ export function PaymentActionsMenu({
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
       toast.success("Fatura indirildi")
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } }
       toast.error(
-        error.response?.data?.message || "Fatura indirme başarısız oldu"
+        err.response?.data?.message || "Fatura indirme başarısız oldu"
       )
     }
   }

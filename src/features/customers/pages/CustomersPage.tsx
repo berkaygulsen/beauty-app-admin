@@ -5,6 +5,7 @@ import { CustomerListTable } from "../components/CustomerListTable"
 import { CustomerFilters as Filters } from "../components/CustomerFilters"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TableLoading, ErrorState, EmptyTableState } from "@/components/ui"
+import type { AxiosError } from "axios"
 import toast from "react-hot-toast"
 
 export default function CustomersPage() {
@@ -16,7 +17,7 @@ export default function CustomersPage() {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["customers", filters],
     queryFn: () => customersApi.getCustomers(filters),
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ error?: { message?: string }; message?: string }>) => {
       const errorMessage = error.response?.data?.error?.message || 
                           error.response?.data?.message || 
                           "Müşteriler yüklenirken bir hata oluştu"
@@ -84,7 +85,7 @@ export default function CustomersPage() {
                 totalPages,
               }}
               onPageChange={handlePageChange}
-              onSortChange={(sortBy, sortOrder) => {
+              onSortChange={(_sortBy, _sortOrder) => {
                 // Note: API doesn't support sortBy/sortOrder, but keeping for UI compatibility
                 setFilters((prev) => ({ ...prev }))
               }}

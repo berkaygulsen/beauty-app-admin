@@ -31,7 +31,7 @@ export function CustomerListTable({
   customers = [],
   pagination,
   onPageChange,
-  onSortChange,
+  onSortChange: _onSortChange,
   onCustomerAction,
 }: CustomerListTableProps) {
   const navigate = useNavigate()

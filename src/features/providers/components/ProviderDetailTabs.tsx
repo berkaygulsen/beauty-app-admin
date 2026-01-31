@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ProviderDetail } from "@/api/endpoints/providers"
 import { ProviderGeneralInfo } from "./ProviderGeneralInfo"
 import { ProviderServices } from "./ProviderServices"

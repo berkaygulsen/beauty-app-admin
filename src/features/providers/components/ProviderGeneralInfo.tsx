@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ProviderDetail } from "@/api/endpoints/providers"
-import { formatDate, formatDateTime } from "@/lib/utils/status"
+import { formatDateTime } from "@/lib/utils/status"
 
 interface ProviderGeneralInfoProps {
   provider: ProviderDetail
