@@ -38,6 +38,7 @@ export function ServiceRequestListTable({
   onAction: _onAction,
 }: ServiceRequestListTableProps) {
   const navigate = useNavigate()
+  const list = serviceRequests ?? []
 
   return (
     <div className="space-y-4">
@@ -59,7 +60,7 @@ export function ServiceRequestListTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {serviceRequests.length === 0 ? (
+            {list.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={11} className="text-center py-8">
                   <div className="text-muted-foreground">
@@ -68,7 +69,7 @@ export function ServiceRequestListTable({
                 </TableCell>
               </TableRow>
             ) : (
-              serviceRequests.map((request) => (
+              list.map((request) => (
                 <TableRow key={request.id}>
                   <TableCell className="font-mono text-xs">
                     {request.id.slice(0, 8)}...

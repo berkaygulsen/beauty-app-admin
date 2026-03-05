@@ -78,7 +78,7 @@ export default function ServiceRequestsPage() {
             </div>
           ) : data ? (
             <ServiceRequestListTable
-              serviceRequests={data.data}
+              serviceRequests={data.data ?? []}
               pagination={pagination}
               onPageChange={(page) =>
                 setFilters((prev) => ({ ...prev, page }))

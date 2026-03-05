@@ -2,7 +2,7 @@ import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from "axio
 import { useAuthStore } from "@/store/authStore"
 import toast from "react-hot-toast"
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.aurorabeauty.app/api/v1"
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
